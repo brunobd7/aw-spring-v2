@@ -10,3 +10,7 @@ spring:
   jpa:
     database: postgresql
     show-sql: true
+
+  jackson:
+    deserialization:
+      fail-on-unknown-properties: true
