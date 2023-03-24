@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: aw-spring-v2
+
+  datasource:
+    username: ${POSTGRES_USERNAME}
+    password: ${POSTGRES_PASS}
+    url: ${POSTGRES_JDBC_URL}
+#    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    database: postgresql
+    show-sql: true
