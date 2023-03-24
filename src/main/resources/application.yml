@@ -5,8 +5,7 @@ spring:
   datasource:
     username: ${POSTGRES_USERNAME}
     password: ${POSTGRES_PASS}
-    url: ${POSTGRES_JDBC_URL}
-#    driver-class-name: org.postgresql.Driver
+    url: ${POSTGRES_URL}
 
   jpa:
     database: postgresql
