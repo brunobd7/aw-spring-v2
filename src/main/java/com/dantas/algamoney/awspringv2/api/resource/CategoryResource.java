@@ -3,6 +3,7 @@ package com.dantas.algamoney.awspringv2.api.resource;
 import com.dantas.algamoney.awspringv2.api.model.Category;
 import com.dantas.algamoney.awspringv2.api.repository.CategoryRepository;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,7 +37,7 @@ public class CategoryResource {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void insertCategory(@RequestBody Category category, HttpServletResponse response){
+    public void insertCategory(@Valid @RequestBody Category category, HttpServletResponse response){
         Category categoryCreated = repository.save(category);
 
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
