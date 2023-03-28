@@ -5,8 +5,10 @@ import com.dantas.algamoney.awspringv2.api.model.Person;
 import com.dantas.algamoney.awspringv2.api.repository.PersonRepository;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -57,6 +59,21 @@ public class PersonResource {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deletePerson(@PathVariable Long personId) {
         repository.deleteById(personId);
+    }
+
+
+    @PutMapping("/{personId}")
+    public ResponseEntity<Person> updatePerson(@PathVariable Long personId, @Valid @RequestBody Person person){
+
+        Person personFounded = repository.findById(personId)
+                .orElseThrow(() -> new EmptyResultDataAccessException(1));
+
+        BeanUtils.copyProperties(person,personFounded,"id");
+
+        personFounded = repository.save(personFounded);
+
+        return ResponseEntity.ok(personFounded);
+
     }
 
 }
