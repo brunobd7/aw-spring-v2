@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Objects;
 
 @RestController
-@RequestMapping("/person/")
+@RequestMapping("/person")
 public class PersonResource {
 
 
@@ -39,18 +39,24 @@ public class PersonResource {
 
         Person personCreated = repository.save(person);
 
-       eventPublisher.publishEvent(new ResourceCreatedEvent(this,response,personCreated.getId()));
+        eventPublisher.publishEvent(new ResourceCreatedEvent(this, response, personCreated.getId()));
 
-       return ResponseEntity.status(HttpStatus.CREATED).build();
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
 
     @GetMapping("/{personId}")
-    public ResponseEntity<Person> findPersonById(@PathVariable Long personId){
+    public ResponseEntity<Person> findPersonById(@PathVariable Long personId) {
 
         Person founded = repository.findById(personId).orElse(null);
 
         return Objects.isNull(founded) ? ResponseEntity.noContent().build() : ResponseEntity.ok(founded);
+    }
+
+    @DeleteMapping("/{personId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deletePerson(@PathVariable Long personId) {
+        repository.deleteById(personId);
     }
 
 }

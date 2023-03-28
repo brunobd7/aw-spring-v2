@@ -3,6 +3,7 @@ package com.dantas.algamoney.awspringv2.api.exception;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -12,6 +13,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
@@ -41,6 +44,17 @@ public class ApiCustomExceptionHandler extends ResponseEntityExceptionHandler {
         return handleExceptionInternal(ex, errorsList,headers, HttpStatus.BAD_REQUEST, request);
     }
 
+    @ExceptionHandler({EmptyResultDataAccessException.class})
+//    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ResponseEntity<Object> handleEmptyResultDataAccessException(EmptyResultDataAccessException ex,WebRequest request){
+
+        String userMessage = messageSource.getMessage("resource.not-found",null, LocaleContextHolder.getLocale());
+        String exMessage = Optional.of(ex.getCause().toString()).orElse(ex.getMessage());
+
+        return handleExceptionInternal(ex, List.of(new CustomApiErrorMessage(userMessage, exMessage)),new HttpHeaders(), HttpStatus.NOT_FOUND, request);
+
+    }
+
 
     private List<CustomApiErrorMessage> mapRequestErrors(BindingResult bindingResult){
 
@@ -57,7 +71,6 @@ public class ApiCustomExceptionHandler extends ResponseEntityExceptionHandler {
               errorsList.add(new CustomApiErrorMessage(userMessage,exceptionMessage));
 
         }
-
 
         return errorsList;
     }
