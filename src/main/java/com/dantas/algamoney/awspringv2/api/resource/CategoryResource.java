@@ -1,10 +1,12 @@
 package com.dantas.algamoney.awspringv2.api.resource;
 
+import com.dantas.algamoney.awspringv2.api.event.ResourceCreatedEvent;
 import com.dantas.algamoney.awspringv2.api.model.Category;
 import com.dantas.algamoney.awspringv2.api.repository.CategoryRepository;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,15 +23,18 @@ public class CategoryResource {
     @Autowired
     private CategoryRepository repository;
 
+    @Autowired
+    private ApplicationEventPublisher eventPublisher;
+
     @GetMapping()
-    public ResponseEntity<List<Category>> listAllCategories(){
+    public ResponseEntity<List<Category>> listAllCategories() {
         List<Category> categories = repository.findAll();
-        return categories.isEmpty() ?ResponseEntity.noContent().build() : ResponseEntity.ok(categories);
+        return categories.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(categories);
 
     }
 
     @GetMapping("/{categoryId}")
-    public ResponseEntity<Category> findCategoryById(@PathVariable Long categoryId){
+    public ResponseEntity<Category> findCategoryById(@PathVariable Long categoryId) {
         Category category = repository.findById(categoryId).orElse(null);
         return Objects.isNull(category) ? ResponseEntity.notFound().build() : ResponseEntity.ok(category);
 
@@ -37,14 +42,9 @@ public class CategoryResource {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void insertCategory(@Valid @RequestBody Category category, HttpServletResponse response){
+    public void insertCategory(@Valid @RequestBody Category category, HttpServletResponse response) {
         Category categoryCreated = repository.save(category);
 
-        URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
-                .path("/{id}")
-                .buildAndExpand(categoryCreated.getId())
-                .toUri();
-
-        response.setHeader("Location", uri.toASCIIString());
+      eventPublisher.publishEvent(new ResourceCreatedEvent(this,response,categoryCreated.getId()));
     }
 }

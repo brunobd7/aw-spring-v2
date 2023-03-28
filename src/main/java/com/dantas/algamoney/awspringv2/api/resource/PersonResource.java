@@ -1,10 +1,13 @@
 package com.dantas.algamoney.awspringv2.api.resource;
 
+import com.dantas.algamoney.awspringv2.api.event.ResourceCreatedEvent;
 import com.dantas.algamoney.awspringv2.api.model.Person;
 import com.dantas.algamoney.awspringv2.api.repository.PersonRepository;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -21,6 +24,9 @@ public class PersonResource {
     @Autowired
     private PersonRepository repository;
 
+    @Autowired
+    private ApplicationEventPublisher eventPublisher;
+
 
     @GetMapping
     public ResponseEntity<List<Person>> listAllPeople() {
@@ -33,14 +39,9 @@ public class PersonResource {
 
         Person personCreated = repository.save(person);
 
-        URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
-                .path("/{id}")
-                .buildAndExpand(personCreated.getId())
-                .toUri();
+       eventPublisher.publishEvent(new ResourceCreatedEvent(this,response,personCreated.getId()));
 
-        response.setHeader("Location", uri.toASCIIString());
-
-        return ResponseEntity.created(uri).build();
+       return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
 
