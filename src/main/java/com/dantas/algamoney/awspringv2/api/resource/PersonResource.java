@@ -43,4 +43,13 @@ public class PersonResource {
         return ResponseEntity.created(uri).build();
     }
 
+
+    @GetMapping("/{personId}")
+    public ResponseEntity<Person> findPersonById(@PathVariable Long personId){
+
+        Person founded = repository.findById(personId).orElse(null);
+
+        return Objects.isNull(founded) ? ResponseEntity.noContent().build() : ResponseEntity.ok(founded);
+    }
+
 }
