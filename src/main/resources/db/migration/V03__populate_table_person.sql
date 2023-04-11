@@ -1,0 +1,9 @@
+INSERT INTO  person (name, is_active, street, house_number, complement, disctrict_neighborhood, postal_code, city) VALUES ('P1', true,'s1',1,'comp1','DOWNTOWN','xxxxxxx', 'CHICAGO');
+INSERT INTO  person (name, is_active, street, house_number, complement, disctrict_neighborhood, postal_code, city) VALUES ('P2', true,'s2',1,'comp1','DOWNTOWN','xxxxxxx', 'CHICAGO');
+INSERT INTO  person (name, is_active, street, house_number, complement, disctrict_neighborhood, postal_code, city) VALUES ('P3', true,'s3',1,'comp1','DOWNTOWN','xxxxxxx', 'CHICAGO');
+INSERT INTO  person (name, is_active, street, house_number, complement, disctrict_neighborhood, postal_code, city) VALUES ('P4', true,'s4',1,'comp1','DOWNTOWN','xxxxxxx', 'CHICAGO');
+INSERT INTO  person (name, is_active, street, house_number, complement, disctrict_neighborhood, postal_code, city) VALUES ('P5', true,'s5',1,'comp1','DOWNTOWN','xxxxxxx', 'CHICAGO');
+INSERT INTO  person (name, is_active, street, house_number, complement, disctrict_neighborhood, postal_code, city) VALUES ('P6', true,'s6',1,'comp1','DOWNTOWN','xxxxxxx', 'CHICAGO');
+INSERT INTO  person (name, is_active, street, house_number, complement, disctrict_neighborhood, postal_code, city) VALUES ('P7', true,'s7',1,'comp1','DOWNTOWN','xxxxxxx', 'CHICAGO');
+INSERT INTO  person (name, is_active, street, house_number, complement, disctrict_neighborhood, postal_code, city) VALUES ('P8', true,'s8',1,'comp1','DOWNTOWN','xxxxxxx', 'CHICAGO');
+INSERT INTO  person (name, is_active, street, house_number, complement, disctrict_neighborhood, postal_code, city) VALUES ('P9', true,'s9',1,'comp1','DOWNTOWN','xxxxxxx', 'CHICAGO');
