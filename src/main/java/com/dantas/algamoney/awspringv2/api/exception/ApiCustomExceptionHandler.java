@@ -32,7 +32,7 @@ public class ApiCustomExceptionHandler extends ResponseEntityExceptionHandler {
     protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
 
         String userMessage = messageSource.getMessage("invalid.message",null, LocaleContextHolder.getLocale());
-        String exMessage = Optional.of(ex.getCause().toString()).orElse(ex.getMessage());
+        String exMessage = Optional.ofNullable(ex.getCause()).orElse(ex).toString();
 
         return handleExceptionInternal(ex, List.of(new CustomApiErrorMessage(userMessage, exMessage)),headers, HttpStatus.BAD_REQUEST, request);
     }
@@ -49,7 +49,7 @@ public class ApiCustomExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<Object> handleEmptyResultDataAccessException(EmptyResultDataAccessException ex,WebRequest request){
 
         String userMessage = messageSource.getMessage("resource.notFound",null, LocaleContextHolder.getLocale());
-        String exMessage = ex.getCause() != null ? ex.getCause().toString() : ex.toString();
+        String exMessage = Optional.ofNullable(ex.getCause()).orElse(ex).toString();
 
         return handleExceptionInternal(ex, List.of(new CustomApiErrorMessage(userMessage, exMessage)),new HttpHeaders(), HttpStatus.NOT_FOUND, request);
 
