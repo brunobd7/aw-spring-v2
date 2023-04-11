@@ -48,8 +48,8 @@ public class ApiCustomExceptionHandler extends ResponseEntityExceptionHandler {
 //    @ResponseStatus(HttpStatus.NOT_FOUND)
     public ResponseEntity<Object> handleEmptyResultDataAccessException(EmptyResultDataAccessException ex,WebRequest request){
 
-        String userMessage = messageSource.getMessage("resource.not-found",null, LocaleContextHolder.getLocale());
-        String exMessage = Optional.of(ex.getCause().toString()).orElse(ex.getMessage());
+        String userMessage = messageSource.getMessage("resource.notFound",null, LocaleContextHolder.getLocale());
+        String exMessage = ex.getCause() != null ? ex.getCause().toString() : ex.toString();
 
         return handleExceptionInternal(ex, List.of(new CustomApiErrorMessage(userMessage, exMessage)),new HttpHeaders(), HttpStatus.NOT_FOUND, request);
 

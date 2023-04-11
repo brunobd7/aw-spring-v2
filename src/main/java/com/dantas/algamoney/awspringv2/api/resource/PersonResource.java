@@ -3,6 +3,7 @@ package com.dantas.algamoney.awspringv2.api.resource;
 import com.dantas.algamoney.awspringv2.api.event.ResourceCreatedEvent;
 import com.dantas.algamoney.awspringv2.api.model.Person;
 import com.dantas.algamoney.awspringv2.api.repository.PersonRepository;
+import com.dantas.algamoney.awspringv2.api.service.PersonService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.BeanUtils;
@@ -12,9 +13,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.net.URI;
 import java.util.List;
 import java.util.Objects;
 
@@ -28,6 +27,9 @@ public class PersonResource {
 
     @Autowired
     private ApplicationEventPublisher eventPublisher;
+
+    @Autowired
+    private PersonService service;
 
 
     @GetMapping
@@ -65,15 +67,14 @@ public class PersonResource {
     @PutMapping("/{personId}")
     public ResponseEntity<Person> updatePerson(@PathVariable Long personId, @Valid @RequestBody Person person){
 
-        Person personFounded = repository.findById(personId)
-                .orElseThrow(() -> new EmptyResultDataAccessException(1));
+        Person personUpdated = service.updatePerson(person,personId);
+        return ResponseEntity.ok(personUpdated);
+    }
 
-        BeanUtils.copyProperties(person,personFounded,"id");
-
-        personFounded = repository.save(personFounded);
-
-        return ResponseEntity.ok(personFounded);
-
+    @PutMapping("/{personId}/isActive")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void updatePerson(@PathVariable Long personId, @RequestBody Boolean isActive){
+        service.updatePersonStatus(isActive, personId);
     }
 
 }
