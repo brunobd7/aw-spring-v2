@@ -1,6 +1,7 @@
 package com.dantas.algamoney.awspringv2.api.model;
 
 import com.dantas.algamoney.awspringv2.api.enums.LaunchType;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -23,9 +24,11 @@ public class Launch {
     private String description;
 
     @Column(name = "due_date")
+    @JsonFormat(pattern = "dd/MM/yyyy")
     private LocalDate dueDate;
 
     @Column(name = "pay_date")
+    @JsonFormat(pattern = "dd/MM/yyyy")
     private LocalDate payDate;
 
     @Column(name = "amount_value")
