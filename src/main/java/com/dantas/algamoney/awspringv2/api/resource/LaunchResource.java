@@ -6,6 +6,7 @@ import com.dantas.algamoney.awspringv2.api.exception.CustomApiErrorMessage;
 import com.dantas.algamoney.awspringv2.api.exception.InvalidOrInactivePersonException;
 import com.dantas.algamoney.awspringv2.api.model.Launch;
 import com.dantas.algamoney.awspringv2.api.repository.LaunchRepository;
+import com.dantas.algamoney.awspringv2.api.repository.filter.LaunchFilter;
 import com.dantas.algamoney.awspringv2.api.service.LaunchService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -40,10 +41,14 @@ public class LaunchResource {
     private MessageSource messageSource;
 
 
-    @GetMapping("/")
     public ResponseEntity<List<Launch>> getAllLauches() {
         List<Launch> launchList = repository.findAll();
         return launchList.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(launchList);
+    }
+
+    @GetMapping("/")
+    public ResponseEntity<List<Launch>> search(LaunchFilter launchFilter){
+        return ResponseEntity.ok(repository.search(launchFilter));
     }
 
     @GetMapping("/{id}")
