@@ -37,7 +37,7 @@ public class LaunchResource {
     @Autowired
     private ApplicationEventPublisher eventPublisher;
 
-   @Autowired
+    @Autowired
     private MessageSource messageSource;
 
 
@@ -47,12 +47,12 @@ public class LaunchResource {
     }
 
     @GetMapping("/")
-    public ResponseEntity<List<Launch>> search(LaunchFilter launchFilter){
+    public ResponseEntity<List<Launch>> search(LaunchFilter launchFilter) {
         return ResponseEntity.ok(repository.search(launchFilter));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Launch> getLaunchById(@PathVariable Long id){
+    public ResponseEntity<Launch> getLaunchById(@PathVariable Long id) {
         Launch launchFounded = repository.findById(id).orElse(new Launch());
 
         return Objects.isNull(launchFounded.getId())
@@ -63,17 +63,23 @@ public class LaunchResource {
 
     @PostMapping("/")
     @ResponseStatus(HttpStatus.CREATED)
-    public void createLaunch(@Valid @RequestBody Launch launch, HttpServletResponse response){
+    public void createLaunch(@Valid @RequestBody Launch launch, HttpServletResponse response) {
 
         Launch createdLaunch = service.saveLaunch(launch);
 
-        eventPublisher.publishEvent(new ResourceCreatedEvent(createdLaunch, response,createdLaunch.getId()));
+        eventPublisher.publishEvent(new ResourceCreatedEvent(createdLaunch, response, createdLaunch.getId()));
+    }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteLaunch(@PathVariable Long id) {
+        repository.deleteById(id);
     }
 
     @ExceptionHandler({InvalidOrInactivePersonException.class})
-    public ResponseEntity<Object> handleInvalidOrInactivePersonException(InvalidOrInactivePersonException ex){
+    public ResponseEntity<Object> handleInvalidOrInactivePersonException(InvalidOrInactivePersonException ex) {
 
-        String userMessage = messageSource.getMessage("person.inactiveOrInvalidPerson",null, LocaleContextHolder.getLocale());
+        String userMessage = messageSource.getMessage("person.inactiveOrInvalidPerson", null, LocaleContextHolder.getLocale());
         String exMessage = ex.toString();
 
         List<CustomApiErrorMessage> errorList = List.of(new CustomApiErrorMessage(userMessage, exMessage));
