@@ -10,18 +10,21 @@ import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import org.apache.commons.lang3.ObjectUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class LaunchRepositoryImpl implements LaunchRepositoryQuery{
+public class LaunchRepositoryQueryImpl implements LaunchRepositoryQuery{
 
     @PersistenceContext
     private EntityManager entityManager;
 
     @Override
-    public List<Launch> search(LaunchFilter launchFilter) {
+    public Page<Launch> search(LaunchFilter launchFilter, Pageable pageable) {
 
         //FIRST WE NEED INVOKE SOME INSTANCE OF OPERATOR OBJECTS TO HANDLE CRITERIA'S QUERIES
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();
@@ -36,7 +39,12 @@ public class LaunchRepositoryImpl implements LaunchRepositoryQuery{
 
         //GENERATING QUERY WITH PARAMS CREATED PREVIOUSLY
         TypedQuery<Launch> query = entityManager.createQuery(criteriaQuery);
-        return query.getResultList();
+
+        //PAGINATION
+        generatePaginationRestrictions(query,pageable);
+
+
+        return new PageImpl<>(query.getResultList(),pageable,totalReturnedItens(launchFilter));
     }
 
     private Predicate[] generateRestrictions(LaunchFilter launchFilter, CriteriaBuilder builder, Root<Launch> root) {
@@ -64,5 +72,32 @@ public class LaunchRepositoryImpl implements LaunchRepositoryQuery{
             );
 
         return predicatesList.toArray(Predicate[]::new);
+    }
+
+    private void generatePaginationRestrictions(TypedQuery<Launch> query, Pageable pageable){
+
+        int actualPage = pageable.getPageNumber();
+        int totalPerPage = pageable.getPageSize();
+
+        int positionOfFirstPageItem = actualPage * totalPerPage;
+
+        query.setFirstResult(positionOfFirstPageItem);
+        query.setMaxResults(totalPerPage);
+
+    }
+
+    private Long totalReturnedItens(LaunchFilter launchFilter){
+
+        CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Long> criteriaQuery = builder.createQuery(Long.class);
+        Root<Launch> root = criteriaQuery.from(Launch.class);
+
+        Predicate[] predicates = generateRestrictions(launchFilter,builder,root);
+
+        criteriaQuery.where(predicates);
+
+        criteriaQuery.select(builder.count(root));
+
+        return entityManager.createQuery(criteriaQuery).getSingleResult();
     }
 }
