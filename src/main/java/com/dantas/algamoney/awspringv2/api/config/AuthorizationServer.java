@@ -31,7 +31,6 @@ import java.time.Duration;
 import java.util.UUID;
 
 @Configuration
-//@EnableWebSecurity
 //@Import(OAuth2AuthorizationServerConfiguration.class) //SET TOKEN INTROSPECTION ENDPOINTS AND DEFAULT CONFIGURATION
 public class AuthorizationServer {
 
@@ -68,7 +67,6 @@ public class AuthorizationServer {
                 .clientSecret("{noop}".concat("@ngul@r0"))//ANGULAR APP SECRET
                 .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
                 .authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
-                .authorizationGrantType(AuthorizationGrantType.PASSWORD)
                 .scope("read")
                 .scope("write")
                 .clientSettings(ClientSettings.builder().requireAuthorizationConsent(false).build())
@@ -89,7 +87,7 @@ public class AuthorizationServer {
                 .build();
     }
 
-
+    //TODO IMPLEMENT JWT CUSTOMIZER WITH ROLES/AUTHORITIES OF USERS
     /**
      * Customizing JWT , we should pass user and pass data. Authorities and roles too
      */

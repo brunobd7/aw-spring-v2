@@ -4,8 +4,6 @@ package com.dantas.algamoney.awspringv2.api.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -20,7 +18,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-//@Configuration
+@Configuration
 //@EnableWebSecurity
 public class ResourceServerConfig {
 
@@ -35,11 +33,11 @@ public class ResourceServerConfig {
                 .requestMatchers("/categories/").permitAll()
                 .anyRequest().authenticated()
                 .and()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)//REMOVE TO USE AuthorizationGrantType CLIENT_CREDENTIALS
-                .and()
+//                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)//REMOVE TO USE AuthorizationGrantType CLIENT_CREDENTIALS
+//                .and()
                 .csrf().disable()
                 .oauth2ResourceServer()
-                .jwt();
+                .jwt();//TODO IMPLEMENT CALL OF JWTAuthenticationConverter
 
         return httpSecurity.build();
     }
