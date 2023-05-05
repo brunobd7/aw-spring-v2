@@ -3,7 +3,6 @@ package com.dantas.algamoney.awspringv2.api.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -21,11 +20,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Configuration
-@EnableWebSecurity
+//@Configuration
+//@EnableWebSecurity
 public class ResourceServerConfig {
 
 
+    /*This filter define wich request destination are authenticaded or allow without authentication,
+     * another definitions we can do here are types of token oauth2 uses to authenticate like OPAQUE and JWT Token */
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
 
@@ -38,7 +39,7 @@ public class ResourceServerConfig {
                 .and()
                 .csrf().disable()
                 .oauth2ResourceServer()
-                .jwt().jwtAuthenticationConverter(jwtAuthenticationConverter());
+                .jwt();
 
         return httpSecurity.build();
     }

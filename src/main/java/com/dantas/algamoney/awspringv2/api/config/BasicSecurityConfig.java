@@ -16,9 +16,9 @@ public class BasicSecurityConfig {
 
     //ENABLE ALL ANNOTATIONS TO USE BASIC HTTP AUTHORIZATION
 
-    /** Using a SecurityFilterChain instead override configure method when extends WebSecurityConfigurerAdapter.
+    /**
+     * Using a SecurityFilterChain instead override configure method when extends WebSecurityConfigurerAdapter.
      *  Then we can config ROUTES , MATCHER AND AUTHENTICATION TYPE.
-     *
      */
 //    @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {

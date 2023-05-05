@@ -16,10 +16,10 @@ spring:
       fail-on-unknown-properties: true
 #    date-format: yyyy-MM-dd
 
-  security:
-    oauth2:
-      resourceserver:
-        opaquetoken:
-          introspection-uri: //localhost:8080/oauth/check_token
-          client-id: ${CLIENT_ID}
-          client-secret: ${CLIENT_SECRET}
+#  security:
+#    oauth2:
+#      resourceserver:
+#        opaquetoken:
+#          introspection-uri: //localhost:8080/oauth/check_token
+#          client-id: ${CLIENT_ID}
+#          client-secret: ${CLIENT_SECRET}
