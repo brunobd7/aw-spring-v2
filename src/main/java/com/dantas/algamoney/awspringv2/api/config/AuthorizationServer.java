@@ -22,12 +22,16 @@ import org.springframework.security.oauth2.server.authorization.client.InMemoryR
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration;
+import org.springframework.security.oauth2.server.authorization.config.annotation.web.configurers.OAuth2AuthorizationServerConfigurer;
 import org.springframework.security.oauth2.server.authorization.settings.AuthorizationServerSettings;
 import org.springframework.security.oauth2.server.authorization.settings.ClientSettings;
 import org.springframework.security.oauth2.server.authorization.settings.TokenSettings;
+import org.springframework.security.oauth2.server.authorization.token.JwtEncodingContext;
+import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenCustomizer;
 import org.springframework.security.web.SecurityFilterChain;
 
 import java.time.Duration;
+import java.util.HashSet;
 import java.util.UUID;
 
 @Configuration
@@ -56,7 +60,8 @@ public class AuthorizationServer {
                 .anyRequest().authenticated()
                 .and()
                 .oauth2ResourceServer()
-                .jwt();
+                .jwt()
+        ;
         return httpSecurity.formLogin(Customizer.withDefaults()).build();
     }
 
@@ -67,10 +72,13 @@ public class AuthorizationServer {
                 .clientSecret("{noop}".concat("@ngul@r0"))//ANGULAR APP SECRET
                 .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
                 .authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
+                .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
                 .scope("read")
                 .scope("write")
-                .clientSettings(ClientSettings.builder().requireAuthorizationConsent(false).build())
-                .tokenSettings(TokenSettings.builder().accessTokenTimeToLive(Duration.ofMinutes(30)).build())
+                .clientSettings(ClientSettings.builder().requireAuthorizationConsent(false).build())// SET CONDITION TO SELECT WICHT ROLES ARE ALLOWED. DONT WORK WIHT CLIENT_CREDENTIALS GRANT TYPE
+                .tokenSettings(TokenSettings.builder()
+                        .accessTokenTimeToLive(Duration.ofSeconds(30))
+                        .refreshTokenTimeToLive(Duration.ofHours(24)).build())
                 .build();
 
         return new InMemoryRegisteredClientRepository(registeredClient);
@@ -87,18 +95,20 @@ public class AuthorizationServer {
                 .build();
     }
 
-    //TODO IMPLEMENT JWT CUSTOMIZER WITH ROLES/AUTHORITIES OF USERS
+
     /**
-     * Customizing JWT , we should pass user and pass data. Authorities and roles too
+     * Customizing JWT , we should pass user and pass data. Authorities and roles too, it is an implementation what become
+     * to update the deprecated "JwtAuthenticationConverter".
      */
- /*   @Bean
+    @Bean
     public OAuth2TokenCustomizer<JwtEncodingContext> jwtBuildCustomizer() {
+        //TODO IMPLEMENT JWT CUSTOMIZER WITH ROLES/AUTHORITIES OF USERS
         return context -> {
-            context.getClaims().claim("nome", "userName");
+            context.getClaims().claim("user_id", "userID");
+            context.getClaims().claim("user_full_name", "userName");
             context.getClaims().claim("authorities", new HashSet<String>());// ROLES / AUTHORITIES
         };
     }
-*/
 
     /**
      * BEAN GENERATE KEYS TO DO A SINGNATURE OF TOKEN

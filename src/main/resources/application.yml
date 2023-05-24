@@ -16,10 +16,10 @@ spring:
       fail-on-unknown-properties: true
 #    date-format: yyyy-MM-dd
 
-#  security:
-#    oauth2:
-#      resourceserver:
-#        opaquetoken:
-#          introspection-uri: //localhost:8080/oauth/check_token
-#          client-id: ${CLIENT_ID}
-#          client-secret: ${CLIENT_SECRET}
+#RESOURCE SERVER CONFIG TO READ JWK RSA PUBLIC KEYS
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8080/
+#          jwk-set-uri: http://localhost:8080/oauth2/jwks

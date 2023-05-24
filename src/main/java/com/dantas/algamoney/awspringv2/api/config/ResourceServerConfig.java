@@ -4,6 +4,7 @@ package com.dantas.algamoney.awspringv2.api.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -16,10 +17,9 @@ import org.springframework.security.web.SecurityFilterChain;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Configuration
-//@EnableWebSecurity
+@EnableWebSecurity
 public class ResourceServerConfig {
 
 
@@ -37,7 +37,8 @@ public class ResourceServerConfig {
 //                .and()
                 .csrf().disable()
                 .oauth2ResourceServer()
-                .jwt();//TODO IMPLEMENT CALL OF JWTAuthenticationConverter
+                .jwt()
+                .jwtAuthenticationConverter(jwtAuthenticationConverter());
 
         return httpSecurity.build();
     }
@@ -47,20 +48,20 @@ public class ResourceServerConfig {
         JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
 
         jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(jwt -> {
-			List<String> authorities = jwt.getClaimAsStringList("authorities");
+			List<String> userRoleAuthorities = jwt.getClaimAsStringList("authorities");
 
-			if (authorities == null) {
-				authorities = Collections.emptyList();
+			if (userRoleAuthorities == null) {
+				userRoleAuthorities = Collections.emptyList();
 			}
 
 			JwtGrantedAuthoritiesConverter scopesAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
-			Collection<GrantedAuthority> grantedAuthorities = scopesAuthoritiesConverter.convert(jwt);
+			Collection<GrantedAuthority> scopeAuthorities = scopesAuthoritiesConverter.convert(jwt);
 
-			grantedAuthorities.addAll(authorities.stream()
+			scopeAuthorities.addAll(userRoleAuthorities.stream()
 					.map(SimpleGrantedAuthority::new)
-					.collect(Collectors.toList()));
+					.toList());
 
-			return grantedAuthorities;
+			return scopeAuthorities;
 		});
 
 		return jwtAuthenticationConverter;
