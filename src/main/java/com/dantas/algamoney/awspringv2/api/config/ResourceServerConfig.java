@@ -30,7 +30,7 @@ public class ResourceServerConfig {
 
         httpSecurity
                 .authorizeHttpRequests()
-                .requestMatchers("/categories/").permitAll()
+                .requestMatchers("/categories/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
 //                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)//REMOVE TO USE AuthorizationGrantType CLIENT_CREDENTIALS

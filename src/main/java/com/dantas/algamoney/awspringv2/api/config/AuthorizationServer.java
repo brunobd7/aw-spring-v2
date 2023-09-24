@@ -56,7 +56,7 @@ public class AuthorizationServer {
     @Bean
     public SecurityFilterChain authFilterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.authorizeHttpRequests()
-                .requestMatchers("/categories").permitAll() // ALLOW A RESOURCE TO BE ACCESSED WITHOU AUTHENTICATION
+                .requestMatchers("/categories/**").permitAll() // ALLOW A RESOURCE TO BE ACCESSED WITHOUT AUTHENTICATION
                 .anyRequest().authenticated()
                 .and()
                 .oauth2ResourceServer()
@@ -72,14 +72,30 @@ public class AuthorizationServer {
                 .clientSecret("{noop}".concat("@ngul@r0"))//ANGULAR APP SECRET
                 .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
                 .authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
-                .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
                 .scope("read")
                 .scope("write")
                 .clientSettings(ClientSettings.builder().requireAuthorizationConsent(false).build())// SET CONDITION TO SELECT WICHT ROLES ARE ALLOWED. DONT WORK WIHT CLIENT_CREDENTIALS GRANT TYPE
                 .tokenSettings(TokenSettings.builder()
                         .accessTokenTimeToLive(Duration.ofSeconds(30))
-                        .refreshTokenTimeToLive(Duration.ofHours(24)).build())
+                        .refreshTokenTimeToLive(Duration.ofHours(24))
+                        .reuseRefreshTokens(false).build())
                 .build();
+
+
+        // TODO Implementation of Authorization Code Grant because Client Credential Grant should not returno a refresh token by convention.
+//        RegisteredClient registeredClient = RegisteredClient.withId(UUID.randomUUID().toString())
+//                .clientId("angular")//ANGULAR APP
+//                .clientSecret("{noop}".concat("@ngul@r0"))//ANGULAR APP SECRET
+//                .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
+//                .authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
+//                .scope("read")
+//                .scope("write")
+//                .clientSettings(ClientSettings.builder().requireAuthorizationConsent(false).build())// SET CONDITION TO SELECT WICHT ROLES ARE ALLOWED. DONT WORK WIHT CLIENT_CREDENTIALS GRANT TYPE
+//                .tokenSettings(TokenSettings.builder()
+//                        .accessTokenTimeToLive(Duration.ofSeconds(30))
+//                        .refreshTokenTimeToLive(Duration.ofHours(24))
+//                        .reuseRefreshTokens(false).build())
+//                .build();
 
         return new InMemoryRegisteredClientRepository(registeredClient);
     }
